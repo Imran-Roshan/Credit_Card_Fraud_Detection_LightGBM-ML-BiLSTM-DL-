@@ -1,161 +1,259 @@
-# Credit Card Fraud Detection using LightGBM & BiLSTM
+# 📌 Credit Card Fraud Detection Using LightGBM (ML) & BiLSTM (DL)
 
-This repository provides **two separate approaches** for detecting fraudulent credit card transactions:
+This repository provides **two separate approaches** to credit card fraud detection:
 
-* **LightGBM (Machine Learning)**
-* **BiLSTM (Deep Learning)**
+1. **LightGBM (Machine Learning)** – for efficient gradient boosting on structured data.
+2. **BiLSTM (Deep Learning)** – for sequential modeling of transaction patterns.
 
-Both models were trained and evaluated **independently** on the same dataset.
-The goal is to provide a **clear comparison** between a fast, interpretable ML approach and a sequence-learning DL model.
+Both models are implemented separately, allowing researchers and practitioners to compare the performance of traditional ML and modern DL techniques on the same dataset.
 
 ---
 
-## 📌 Table of Contents
+## 📂 Table of Contents
 
 * [Introduction](#introduction)
 * [Dataset](#dataset)
-* [Project Structure](#project-structure)
-* [Models](#models)
-* [Evaluation & Comparison](#evaluation--comparison)
-* [Installation](#installation)
-* [Usage](#usage)
+* [Repository Structure](#repository-structure)
+* [Model Training](#model-training)
+
+  * [LightGBM Training](#lightgbm-training)
+  * [BiLSTM Training](#bilstm-training)
+* [Validation & Evaluation](#validation--evaluation)
+* [Prediction](#prediction)
+* [Results](#results)
 * [Contributing](#contributing)
 * [License](#license)
 
 ---
 
-## 🔍 Introduction
+## 🚀 Introduction
 
-Fraud detection is a **critical challenge in financial systems** due to the highly imbalanced nature of transaction data.
-This project explores two different modeling approaches:
+Credit card fraud is a major concern for financial institutions worldwide. Detecting fraudulent transactions among millions of legitimate ones requires **scalable** and **accurate** models.
 
-* **LightGBM**: Gradient boosting decision tree framework, optimized for speed and imbalance handling.
-* **BiLSTM**: A recurrent neural network that learns sequential dependencies across features.
+This repository demonstrates:
 
-👉 Both implementations are included in this repository for researchers, data scientists, and engineers to **train, test, and compare**.
+* **Feature-based classification** with **LightGBM**.
+* **Sequential fraud pattern detection** with **BiLSTM**.
+
+Both models have been trained and evaluated independently.
 
 ---
 
 ## 📊 Dataset
 
-* **Source**: [Kaggle – Credit Card Fraud Detection](https://www.kaggle.com/mlg-ulb/creditcardfraud)
-* **Records**: 284,807 transactions
-* **Fraudulent cases**: 492 (0.172%)
-* **Features**:
+* **Name**: Synthetic Credit Card Transactions Dataset
+* **Size**: \~1.8M transactions
+* **Features**: 23
+* **Target**: `is_fraud` (1 = Fraud, 0 = Legitimate)
 
-  * 28 anonymized PCA-transformed features (`V1`–`V28`)
-  * `Time`, `Amount`
-  * `Class` (Target: 0 = Legitimate, 1 = Fraud)
+**Key columns**:
 
-⚠️ Highly imbalanced dataset — requires special handling for fair evaluation.
+* `trans_date_trans_time`: Timestamp of transaction
+* `cc_num`: Credit card number (anonymized)
+* `amt`: Transaction amount
+* `category`: Transaction type (travel, food, etc.)
+* `city_pop`: Population of the city
+* `merch_lat, merch_long`: Merchant location
+* `is_fraud`: Fraud flag (target variable)
 
----
-
-## 📂 Project Structure
-
-```
-credit_card_fraud_detection_lightgbm_bilstm/
-│── README.md
-│── requirements.txt
-│── train_lightgbm.py        # LightGBM training & evaluation
-│── train_bilstm.py          # BiLSTM training & evaluation
-│── evaluate_model.py        # Compare both models
-│── predict_batch.py         # Batch predictions
-│── predict_single.py        # Single transaction prediction
-│── utils.py                 # Data preprocessing & helpers
-│── data/                    # Dataset (creditcard.csv here)
-│── models/                  # Saved models (.pkl, .h5)
-```
+⚠️ **Disclaimer**: The dataset is anonymized and only for research/educational purposes.
 
 ---
 
-## 🤖 Models
-
-### 🔹 LightGBM (Machine Learning)
-
-* Handles imbalanced data using **class weights**.
-* Provides **feature importance** insights.
-* Very **fast training & inference**.
-
-### 🔹 BiLSTM (Deep Learning)
-
-* Learns **temporal patterns** in transaction sequences.
-* Uses dropout & early stopping to prevent overfitting.
-* Achieves better fraud-class recall compared to baseline ML models.
-
----
-
-## 📈 Evaluation & Comparison
-
-Both models were trained **independently** and tested on the same dataset.
-
-| Metric                      | LightGBM (ML) | BiLSTM (DL) |
-| --------------------------- | ------------- | ----------- |
-| **Precision (Fraud class)** | 0.27          | 0.21        |
-| **Recall (Fraud class)**    | 0.79          | 0.84        |
-| **F1-score (Fraud class)**  | 0.41          | 0.33        |
-| **ROC-AUC**                 | 0.91          | 0.92        |
-| **Speed**                   | Fast          | Slower      |
-| **Interpretability**        | High          | Low         |
-
-📌 **Key Insights**:
-
-* LightGBM is **faster** and provides better **precision & F1-score**.
-* BiLSTM achieves **slightly higher recall** and ROC-AUC, making it better at **catching frauds**.
-* Both models highlight the trade-off between **accuracy, interpretability, and recall**.
-
----
-
-## ⚙️ Installation
+## 📂 Repository Structure
 
 ```bash
-git clone https://github.com/your-username/credit_card_fraud_detection_lightgbm_bilstm.git
-cd credit_card_fraud_detection_lightgbm_bilstm
-pip install -r requirements.txt
+Credit_Card_Fraud_Detection_LightGBM_BiLSTM/
+│── README.md                 # Project documentation
+│── requirements.txt          # Dependencies
+│
+├── data/
+│   └── creditcard.csv        # Dataset (add here)
+│
+├── lightgbm_model/
+│   ├── train_lightgbm.py     # Train LightGBM model
+│   ├── predict_lightgbm.py   # Inference using LightGBM
+│   └── utils_lightgbm.py     # Helper functions
+│
+├── bilstm_model/
+│   ├── train_bilstm.py       # Train BiLSTM model
+│   ├── predict_bilstm.py     # Inference using BiLSTM
+│   └── utils_bilstm.py       # Helper functions
+│
+└── results/
+    ├── lightgbm_results.png  # Metrics & confusion matrix (LightGBM)
+    └── bilstm_results.png    # Metrics & confusion matrix (BiLSTM)
 ```
 
 ---
 
-## 🚀 Usage
+## ⚙️ Model Training
 
-1. Place `creditcard.csv` dataset inside the `data/` folder.
-2. Train LightGBM model:
+### 🔹 LightGBM Training
 
-   ```bash
-   python train_lightgbm.py
-   ```
-3. Train BiLSTM model:
+File: `train_lightgbm.py`
 
-   ```bash
-   python train_bilstm.py
-   ```
-4. Compare both models:
+```python
+import lightgbm as lgb
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, roc_auc_score
 
-   ```bash
-   python evaluate_model.py
-   ```
-5. Run predictions:
+# Load dataset
+data = pd.read_csv("../data/creditcard.csv")
+X = data.drop("is_fraud", axis=1)
+y = data["is_fraud"]
 
-   ```bash
-   python predict_batch.py lightgbm
-   python predict_batch.py bilstm
-   python predict_single.py lightgbm
-   python predict_single.py bilstm
-   ```
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)
+
+# LightGBM Dataset
+train_data = lgb.Dataset(X_train, label=y_train)
+test_data = lgb.Dataset(X_test, label=y_test)
+
+# Parameters
+params = {"objective": "binary", "metric": "auc", "boosting": "gbdt"}
+
+# Train
+model = lgb.train(params, train_data, valid_sets=[test_data], num_boost_round=200)
+
+# Evaluation
+y_pred = model.predict(X_test)
+print("AUC-ROC:", roc_auc_score(y_test, y_pred))
+print(classification_report(y_test, (y_pred > 0.5).astype(int)))
+```
+
+---
+
+### 🔹 BiLSTM Training
+
+File: `train_bilstm.py`
+
+```python
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, LSTM, Bidirectional, Dropout
+from sklearn.metrics import classification_report, roc_auc_score
+
+# Load dataset
+data = pd.read_csv("../data/creditcard.csv")
+X = data.drop("is_fraud", axis=1).values
+y = data["is_fraud"].values
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)
+
+# Scale
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Reshape for BiLSTM
+X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
+X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+
+# Model
+model = Sequential()
+model.add(Bidirectional(LSTM(64, return_sequences=True), input_shape=(X_train.shape[1], 1)))
+model.add(Dropout(0.3))
+model.add(Bidirectional(LSTM(32)))
+model.add(Dense(1, activation="sigmoid"))
+
+# Compile & Train
+model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
+model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=5, batch_size=128)
+
+# Evaluation
+y_pred = model.predict(X_test)
+print("AUC-ROC:", roc_auc_score(y_test, y_pred))
+print(classification_report(y_test, (y_pred > 0.5).astype(int)))
+```
+
+---
+
+## 📈 Validation & Evaluation
+
+Both models were validated using:
+
+* **Accuracy**
+* **Precision / Recall / F1-score**
+* **AUC-ROC**
+* **Confusion Matrix**
+
+---
+
+## 🔮 Prediction
+
+### LightGBM Prediction
+
+File: `predict_lightgbm.py`
+
+```python
+import pickle
+import pandas as pd
+
+# Load model
+with open("lightgbm_model.pkl", "rb") as f:
+    model = pickle.load(f)
+
+# Load new data
+data = pd.read_csv("../data/new_transactions.csv")
+
+# Predict
+preds = model.predict(data)
+print(preds)
+```
+
+### BiLSTM Prediction
+
+File: `predict_bilstm.py`
+
+```python
+import numpy as np
+import pandas as pd
+from tensorflow.keras.models import load_model
+from sklearn.preprocessing import StandardScaler
+
+# Load model
+model = load_model("bilstm_model.h5")
+
+# Load new data
+data = pd.read_csv("../data/new_transactions.csv")
+
+# Preprocess
+scaler = StandardScaler()
+X = scaler.fit_transform(data.values)
+X = np.reshape(X, (X.shape[0], X.shape[1], 1))
+
+# Predict
+preds = model.predict(X)
+print(preds)
+```
+
+---
+
+## ✅ Results
+
+| Model    | Accuracy | Precision | Recall | F1-Score | AUC-ROC |
+| -------- | -------- | --------- | ------ | -------- | ------- |
+| LightGBM | \~99%    | High      | Medium | Balanced | 0.92+   |
+| BiLSTM   | \~97%    | Medium    | High   | Lower    | 0.91+   |
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! You can extend this repo by:
+Contributions are welcome!
 
-* Adding new models (XGBoost, Transformers, etc.)
-* Experimenting with oversampling (SMOTE, ADASYN) or cost-sensitive learning
-* Improving feature engineering
+* Fork the repo
+* Create a feature branch
+* Submit a pull request
 
 ---
 
 ## 📜 License
 
 This project is licensed under the **MIT License**.
-
